@@ -124,6 +124,7 @@ if (!$specsFile || !is_readable($specsFile)) {
 $specsContent = file_get_contents($specsFile);
 $specsData = json_decode($specsContent, true);
 if (json_last_error() !== JSON_ERROR_NONE) {
+    JLog::add('lotteries.json parse error: ' . json_last_error_msg(), JLog::ERROR, 'jerror');
     die('Configuration error. Please contact the administrator.');
 }
 
@@ -339,7 +340,8 @@ $configFile = '/home/oscara/web/lottoexpert.net/public_html/settings2.json';
 
 // Check if the file exists
 if (!file_exists($configFile)) {
-    die('Configuration file not found.');
+    JLog::add('settings2.json not found at configured path', JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 
 // Read and decode the JSON configuration
@@ -375,24 +377,30 @@ $learningRate      = $gameConfig['learningRate']      ?? null;
 $activationFunction= $gameConfig['activationFunction']?? null;
 $hiddenLayers      = $gameConfig['hiddenLayers']      ?? null;
 
-// Validate extracted parameters...
+// Validate extracted parameters (log specifics internally, show generic message)
 if (!is_numeric($epochs) || $epochs <= 0) {
-    die('Invalid value for "epochs". Must be a positive number.');
+    JLog::add('Config validation: invalid epochs for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 if (!is_numeric($batchSize) || $batchSize <= 0) {
-    die('Invalid value for "batchSize". Must be a positive number.');
+    JLog::add('Config validation: invalid batchSize for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 if (!is_numeric($dropoutRate) || $dropoutRate < 0 || $dropoutRate > 1) {
-    die('Invalid value for "dropoutRate". Must be between 0 and 1.');
+    JLog::add('Config validation: invalid dropoutRate for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 if (!is_numeric($learningRate) || $learningRate <= 0) {
-    die('Invalid value for "learningRate". Must be greater than 0.');
+    JLog::add('Config validation: invalid learningRate for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 if (!in_array($activationFunction, ['relu','sigmoid','tanh'], true)) {
-    die('Invalid value for "activationFunction".');
+    JLog::add('Config validation: invalid activationFunction for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 if (!is_numeric($hiddenLayers) || $hiddenLayers <= 0) {
-    die('Invalid value for "hiddenLayers". Must be a positive number.');
+    JLog::add('Config validation: invalid hiddenLayers for game ' . $gameId, JLog::ERROR, 'jerror');
+    die('Configuration error. Please contact the administrator.');
 }
 
 
